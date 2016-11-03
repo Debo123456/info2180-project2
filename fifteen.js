@@ -6,12 +6,16 @@ $(document).ready(function(e) {
 	//Add puzzlepiece class to tiles
 	$puzzleArea.children().addClass("puzzlepiece");
 	
+	$("#controls").append("<select id='img_select'><option>Select Image</option><option>Random</option><option>Image 1</option><option>Image 2</option><option>Image 3</option><option>Image 4</option></select>");
 	var $pieces = $("#puzzlearea > div");
 	
 	//Keep track of the position of the empty space
-	var empty_pos = ["297px", "300px"];
-	var count = 0;
+	var empty_pos;
+	var backgrounds = ["background.jpg", "background1.jpg", "background2.jpg", "background3.jpg"];
+	//Function to set up tiles for puzzle
+	setPuzzle();
 	
+	//move tile on click
 	$pieces.on("click", function(){
 		$(this).fadeOut(function(){
 			moveTile(this);
@@ -19,12 +23,13 @@ $(document).ready(function(e) {
 		$(this).fadeIn();
 	});
 	
+	//shuffle puzzle
 	$("#shufflebutton").on("click", function(){
 		shuffle(1500);
 		
 	});
 	
-	
+	//Change style if tiles are moveable
 	$pieces.hover(function(e) 
 	{
 		if(isMoveable(this))
@@ -38,9 +43,40 @@ $(document).ready(function(e) {
 		$(this).css("border-color", "#000");
 	});
 	
+
+	$img = $("#img_select");
 	
-	
+	$img.on("change", function(){
+		var option = $("#img_select option:selected").text();
+		if(option == "Image 1")
+		{
+			setBackground(backgrounds[0]);
+		}
+		else if(option == "Image 2")
+		{
+			setBackground(backgrounds[1]);
+		}
+		else if(option == "Image 3")
+		{
+			setBackground(backgrounds[2]);
+		}
+		else if(option == "Image 4")
+		{
+			setBackground(backgrounds[3]);
+		}
+		else if(option == "Random")
+		{
+			setBackground(backgrounds[Math.floor(Math.random() * backgrounds.length)]);
+		}
+		});
+
+///*****************************************************************************************************************************************************/
+																		//FUNCTIONS//
+/*******************************************************************************************************************************************************/	
+	function setPuzzle(){
 	//Loop for positioning tiles and background image
+	empty_pos = ["297px", "300px"];
+	var count =0;
 	for(var i = 0; i<$pieces.length; i++)
 	{
 		if(count > 3)
@@ -74,48 +110,50 @@ $(document).ready(function(e) {
 		
 		count++;
 	}
+	}
 	
 	
 	
-	//click event for tiles to move to empty position
+	//Functions for tiles to move to empty position
 	function moveTile(tile){
-				var new_top = empty_pos[0];
-				var new_left = empty_pos[1];
-				empty_pos = [tile.style.top, tile.style.left];
-				tile.style.top = new_top;
-				tile.style.left = new_left;
+		var new_top = empty_pos[0];
+		var new_left = empty_pos[1];
+		empty_pos = [tile.style.top, tile.style.left];
+		tile.style.top = new_top;
+		tile.style.left = new_left;
 	}
 	
 	
 		
 	
-		
-		function isMoveable(tile){
-		if(tile.style.top == empty_pos[0] ||  tile.style.left == empty_pos[1])
-		
+	//Check if tiles can be moved
+	function isMoveable(tile){
+		if(tile.style.top == empty_pos[0] ||  tile.style.left == empty_pos[1])	
 		{
 			var x = parseInt(empty_pos[0].slice(0, (empty_pos[0].length -2)));
 			var y = parseInt(empty_pos[1].slice(0, (empty_pos[1].length -2)));
-			
+		
 			if( (x +99) + "px" == tile.style.top || (x - 99) + "px" == tile.style.top)
 			{
 				return true;
 			}
-			
+				
 			if( (y +100) + "px" == tile.style.left || (y - 100) + "px" == tile.style.left)
 			{
 				return true;
 			}
-			
+				
 		}
 	}
 		
-		function shuffle(num)
+	
+	
+	function shuffle(num)
 	{
 		var empty_pos = ["297px", "300px"];
-	var count = 0;
-	
+		var count = 0;
 		var moveables = new Array();
+		
 		for(var i = 0; i<num; i++)
 		{
 			var count = 0;
@@ -135,7 +173,13 @@ $(document).ready(function(e) {
 		}
 	}
 	
-	
-	
-	
+	function setBackground(background)
+	{
+		for(var i = 0; i<$pieces.length; i++)
+		{
+			$pieces[i].style.background = "url(" + background + ")";
+		}
+		
+		setPuzzle();
+	}
 });
