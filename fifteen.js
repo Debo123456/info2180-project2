@@ -12,6 +12,34 @@ $(document).ready(function(e) {
 	var empty_pos = ["297px", "300px"];
 	var count = 0;
 	
+	$pieces.on("click", function(){
+		$(this).fadeOut(function(){
+			moveTile(this);
+		});
+		$(this).fadeIn();
+	});
+	
+	$("#shufflebutton").on("click", function(){
+		shuffle(1500);
+		
+	});
+	
+	
+	$pieces.hover(function(e) 
+	{
+		if(isMoveable(this))
+		{
+			$(this).addClass("movablepiece");
+			$(this).css("border-color", "#F00");
+		}
+    }, function()
+	{
+		$(this).removeClass("movablepiece");
+		$(this).css("border-color", "#000");
+	});
+	
+	
+	
 	//Loop for positioning tiles and background image
 	for(var i = 0; i<$pieces.length; i++)
 	{
@@ -47,50 +75,67 @@ $(document).ready(function(e) {
 		count++;
 	}
 	
+	
+	
 	//click event for tiles to move to empty position
-	$pieces.on("click", function(){
-		var new_top = empty_pos[0];
-		var new_left = empty_pos[1];
-		empty_pos = [this.style.top, this.style.left];
-		this.style.top = new_top;
-		this.style.left = new_left;
-		});
-		
-	//Test if tile can move
-	function canMove(){
-		if(this.style.top == (parseInt(empty_pos[0].slice(0, (this.style.top.length - 2)))) - 99 || this.style.top == (parseInt(empty_pos[0].slice(0, (this.style.top.length - 2)))) + 99)
-		{
-			if(this.style.left == (parseInt(empty_pos[1].slice(0, (this.style.top.length - 2)))) - 100 || this.style.left == (parseInt(empty_pos[1].slice(0, (this.style.top.length - 2)))) + 100)
-			{
-				return true;	
-			}	
-		}
+	function moveTile(tile){
+				var new_top = empty_pos[0];
+				var new_left = empty_pos[1];
+				empty_pos = [tile.style.top, tile.style.left];
+				tile.style.top = new_top;
+				tile.style.left = new_left;
 	}
+	
+	
 		
-	//Red background on hover	
-	$pieces.hover(function(e) 
-	{
-		if(this.style.top == empty_pos[0] ||  this.style.left == empty_pos[1])
+	
+		
+		function isMoveable(tile){
+		if(tile.style.top == empty_pos[0] ||  tile.style.left == empty_pos[1])
 		
 		{
 			var x = parseInt(empty_pos[0].slice(0, (empty_pos[0].length -2)));
 			var y = parseInt(empty_pos[1].slice(0, (empty_pos[1].length -2)));
 			
-			if( (x +99) + "px" == this.style.top || (x - 99) + "px" == this.style.top)
+			if( (x +99) + "px" == tile.style.top || (x - 99) + "px" == tile.style.top)
 			{
-				$(this).css("border-color", "#F00");
+				return true;
 			}
 			
-			if( (y +100) + "px" == this.style.left || (y - 100) + "px" == this.style.left)
+			if( (y +100) + "px" == tile.style.left || (y - 100) + "px" == tile.style.left)
 			{
-				$(this).css("border-color", "#F00");
+				return true;
 			}
 			
 		}
-    }, function()
-	{
-		$(this).css("border-color", "#000");
-	});
+	}
 		
+		function shuffle(num)
+	{
+		var empty_pos = ["297px", "300px"];
+	var count = 0;
+	
+		var moveables = new Array();
+		for(var i = 0; i<num; i++)
+		{
+			var count = 0;
+			for(var x = 0; x<$pieces.length; x++)
+			{
+				if(isMoveable($pieces[x]))
+				{
+					moveables[count] = $pieces[x];
+					count++;
+				}
+			}
+			
+			var new_top = empty_pos[0];
+			var new_left = empty_pos[1];
+			var rand = Math.floor(Math.random() * moveables.length);
+			moveTile(moveables[rand]);
+		}
+	}
+	
+	
+	
 	
 });
